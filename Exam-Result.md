@@ -474,11 +474,12 @@ cd frontend && npm audit --audit-level=moderate
 
 ### Security Scan ใน CI Pipeline (Rubric 1.7 ข้อ 4)
 
-**✏️ ยืนยันว่าได้เพิ่ม `npm audit --audit-level=high` ใน `.github/workflows/cicd.yml` แล้ว:** ☐ ใช่
+**✏️ ยืนยันว่าได้เพิ่ม `npm audit --audit-level=high` ใน `.github/workflows/cicd.yml` แล้ว:** ✅ ใช่
 
 **รูปที่ 7 — GitHub Actions แสดง npm audit step รันสำเร็จ**
 
-`![CI Security Scan](./tests/reports/ci-security-scan.png)`
+[CI Security Scan](./tests/reports/ci-security-scan1.png)
+[CI Security Scan](./tests/reports/ci-security-scan2.png)
 
 ---
 
@@ -488,64 +489,73 @@ cd frontend && npm audit --audit-level=moderate
 
 ---
 
-### BUG-001: [✏️ ชื่อ Bug สั้น ๆ อธิบายปัญหา]
+### BUG-001: ระบบอนุญาตให้ชำระเงินด้วยยอดที่น้อยกว่าค่าอาหารจริง (เงินทอนติดลบ)
 
 | รายการ | ค่า |
 |--------|-----|
-| **Severity** | (เลือก: Critical / High / Medium / Low) |
-| **Priority** | (เลือก: P1 / P2 / P3) |
-| **Feature** | |
-| **Status** | (เลือก: Open / Fixed) |
+| **Severity** | ( Critical ) |
+| **Priority** | ( P1 ) |
+| **Feature** | ระบบชำระเงิน |
+| **Status** | ( Open ) |
+
+### BUG-002: ระบบเปลี่ยนจำนวนอาหาร (quantity) จาก 0 เป็น 1 อัตโนมัติแทนที่จะบล็อก
+
+| รายการ | ค่า |
+|--------|-----|
+| **Severity** | ( high ) |
+| **Priority** | ( P2 ) |
+| **Feature** | ระบบจัดการออเดอร์ |
+| **Status** | ( Open ) |
 
 #### Steps to Reproduce
 **✏️ ระบุขั้นตอนที่ทำให้เกิด Bug ซ้ำได้ชัดเจน**
-1. 
-2. 
-3. 
+1. เปิดโปรแกรม Postman และเลือก Request "ชำระเงิน" (Payment)
+2. กำหนด orderId ของออเดอร์ที่มียอดรวม 80 บาท
+3. ใส่ค่า amountPaid เท่ากับ 50 บาท (น้อยกว่าค่าอาหาร) แล้วกด Send
 
 #### Expected Result
-> ✏️ 
+> ✏️ ระบบควรปฏิเสธการชำระเงินและแจ้ง Error รหัส 400 (Bad Request) พร้อมข้อความแจ้งเตือนว่า "ยอดเงินไม่เพียงพอ"
 
 #### Actual Result
-> ✏️ 
+> ✏️ ระบบตอบกลับด้วยรหัส 201 (Created) และแสดงผล change (เงินทอน) เป็น -30 ซึ่งเป็นการบันทึกข้อมูลการเงินที่ผิดพลาด
 
 #### Evidence
 
-`![BUG-001](./tests/reports/bug-001.png)`
+![BUG-001](./tests/reports/bug-001.png)
 
 #### Business Impact
 > ✏️ ระบุผลกระทบต่อการดำเนินธุรกิจของร้านอาหาร
-
+เป็นปัญหาที่กระทบต่อ "ความถูกต้องของข้อมูลทางการเงิน" โดยตรง ซึ่งถือเป็นความเสี่ยงสูงสุดในระบบร้านอาหาร หากลูกค้าจ่ายไม่ครบแต่ระบบบันทึกว่า "ชำระสำเร็จ" จะนำไปสู่ปัญหาการทุจริต การทำบัญชีผิดพลาด และร้านอาหารขาดทุนได้ทันที
 ---
 
-### BUG-002: [✏️ ชื่อ Bug สั้น ๆ อธิบายปัญหา]
+### BUG-002: การปัดเศษจำนวนอาหารจาก 0 เป็น 1
 
 | รายการ | ค่า |
 |--------|-----|
-| **Severity** | (เลือก: Critical / High / Medium / Low) |
-| **Priority** | (เลือก: P1 / P2 / P3) |
-| **Feature** | |
-| **Status** | (เลือก: Open / Fixed) |
+| **Severity** | ( High ) |
+| **Priority** | ( P2 ) |
+| **Feature** | ระบบจัดการออเดอร์ |
+| **Status** | ( Open ) |
 
 #### Steps to Reproduce
 **✏️ ระบุขั้นตอนที่ทำให้เกิด Bug ซ้ำได้ชัดเจน**
-1. 
-2. 
-3. 
+1. เปิดโปรแกรม Postman และเลือก Request "เพิ่มรายการอาหาร" (Add Item)
+2. ระบุ menuId ที่ต้องการสั่ง
+3. ใส่ค่า qty (จำนวน) เท่ากับ 0 แล้วกด Send
 
 #### Expected Result
-> ✏️ 
+> ✏️ ระบบควรปฏิเสธและแจ้ง Error รหัส 400 (Bad Request) ว่า "ไม่สามารถสั่งอาหารจำนวน 0 จานได้"
 
 #### Actual Result
-> ✏️ 
+> ✏️ ระบบตอบกลับด้วยรหัส 201 (Created) โดย backend ทำการเปลี่ยนค่า qty จาก 0 เป็น 1 ให้โดยอัตโนมัติ ทำให้ลูกค้าได้รับอาหารและต้องเสียเงินโดยไม่ได้ตั้งใจ
 
 #### Evidence
 
-`![BUG-002](./tests/reports/bug-002.png)`
+![BUG-002](./tests/reports/bug-002.png)
 
 #### Business Impact
 > ✏️ ระบุผลกระทบต่อการดำเนินธุรกิจของร้านอาหาร
-
+แม้จะไม่กระทบต่อกระแสเงินสดของร้านโดยตรงเหมือน Bug แรก แต่เป็นปัญหาที่กระทบต่อ "ประสบการณ์ผู้ใช้งาน" (User Experience - UX) อย่างรุนแรง เพราะลูกค้าจะได้รับสิ่งที่ไม่ได้สั่ง และต้องเสียค่าใช้จ่ายโดยไม่ตั้งใจ ซึ่งนำไปสู่การร้องเรียน (Complaint) และความไม่เชื่อมั่นในระบบ
 ---
 
 ## Deployment Guide
@@ -572,7 +582,7 @@ cd frontend && npm audit --audit-level=moderate
 
 ```bash
 # 1. Clone Repository
-git clone https://github.com/[รหัสนักศึกษา]/Restaurant-Management-System-Exam-2025.git
+git clone https://github.com/68030033/Restaurant-Management-System-Exam-2025.git
 cd Restaurant-Management-System-Exam-2025
 
 # 2. ตั้งค่า Environment Variables (Backend)
@@ -600,8 +610,8 @@ cd frontend && npm install && npm run dev
 
 | Service | Port ที่รันจริง | ค่า CORS_ORIGIN ที่ตั้ง | ค่า VITE_API_URL ที่ตั้ง |
 |---------|---------------|------------------------|------------------------|
-| Backend API | | | — |
-| Frontend | | — | |
+| Backend API | port 3001 | http://localhost:5173 | — |
+| Frontend | http://localhost:5173/ | — | https://rms-api-YOURNAME.onrender.com/api |
 
 #### ผล Smoke Test — On-Premises
 
@@ -609,18 +619,18 @@ cd frontend && npm install && npm run dev
 
 | ทดสอบ | URL | ผลลัพธ์ที่คาดหวัง | ผ่าน/ไม่ผ่าน |
 |-------|-----|-----------------|-------------|
-| Backend Health Check | `http://localhost:[port]/api/health` | `{"status":"ok"}` | ☐ |
-| Frontend Login | `http://localhost:5173` | หน้า Login แสดงผลสำเร็จ | ☐ |
+| Backend Health Check | `http://localhost:3001/api/health` | `{"status":"ok"}` | ✅ |
+| Frontend Login | `http://localhost:5173` | หน้า Login แสดงผลสำเร็จ | ✅ |
 
 #### หลักฐาน On-Premises
 
 **รูปที่ 8 — Backend Health Check (`/api/health` ตอบ `{"status":"ok"}`)**
 
-`![On-Premises Backend Health](./tests/reports/onprem-backend-health.png)`
+![On-Premises Backend Health](./tests/reports/onprem-backend-health.png)
 
 **รูปที่ 9 — Frontend Login สำเร็จ**
 
-`![On-Premises Frontend Login](./tests/reports/onprem-frontend-login.png)`
+![On-Premises Frontend Login](./tests/reports/onprem-frontend-login.png)
 
 ---
 
@@ -631,10 +641,10 @@ cd frontend && npm install && npm run dev
 
 **✏️ ทำเครื่องหมาย ✅ เมื่อแก้ไขเสร็จแล้ว**
 
-- [ ] เพิ่ม Environment Variables ครบถ้วน (`DATABASE_URL`, `JWT_SECRET`, `CORS_ORIGIN`, `VITE_API_URL`)
-- [ ] กำหนด Port Mapping: backend → 3001, frontend → 80
-- [ ] เพิ่ม Health Check สำหรับ backend service
-- [ ] กำหนด `depends_on` ให้ frontend รอ backend พร้อมก่อน
+- [✅] เพิ่ม Environment Variables ครบถ้วน (`DATABASE_URL`, `JWT_SECRET`, `CORS_ORIGIN`, `VITE_API_URL`)
+- [✅] กำหนด Port Mapping: backend → 3001, frontend → 80
+- [✅] เพิ่ม Health Check สำหรับ backend service
+- [✅] กำหนด `depends_on` ให้ frontend รอ backend พร้อมก่อน
 
 #### Environment Variables ที่ตั้งค่าจริงใน `docker-compose.yml` (Rubric 2.2 ข้อ 2)
 
@@ -642,11 +652,11 @@ cd frontend && npm install && npm run dev
 
 | Variable | Service | ค่าที่ตั้งจริง |
 |----------|---------|--------------|
-| `DATABASE_URL` | backend | |
+| `DATABASE_URL` | backend | postgresql://neondb_owner:npg_3cQySeOUdzh6@ep-divine-water-aox7h6hc.c-2.ap-southeast-1.aws.neon.tech/neondb?sslmode=require |
 | `JWT_SECRET` | backend | (ตั้งค่าแล้ว — ไม่ระบุค่าจริงเพื่อความปลอดภัย) |
-| `CORS_ORIGIN` | backend | |
-| `NODE_ENV` | backend | |
-| `VITE_API_URL` | frontend | |
+| `CORS_ORIGIN` | backend | http://localhost:5173 |
+| `NODE_ENV` | backend | production |
+| `VITE_API_URL` | frontend | /api |
 
 #### Multi-stage Build (Rubric 2.5 ข้อ 2)
 
@@ -654,12 +664,13 @@ cd frontend && npm install && npm run dev
 
 | Service | มี Multi-stage Build | Stage ที่ใช้ (เช่น builder → runner) |
 |---------|--------------------|------------------------------------|
-| Backend | ☐ มี / ☐ ไม่มี | |
-| Frontend | ☐ มี / ☐ ไม่มี | |
+| Backend | ✅ มี / ☐ ไม่มี | deps → builder → runner |
+| Frontend | ✅ มี / ☐ ไม่มี | builder → nginx |
 
 **รูปที่ 10 — Dockerfile แสดง Multi-stage build**
 
-`![Multi-stage Dockerfile](./tests/reports/dockerfile-multistage.png)`
+![Multi-stage Dockerfile](./tests/reports/dockerfile-multistage1.png)
+![Multi-stage Dockerfile](./tests/reports/dockerfile-multistage2.png)
 
 #### Volume Mapping (Rubric 2.5 ข้อ 4)
 
@@ -667,7 +678,7 @@ cd frontend && npm install && npm run dev
 
 | Volume Name / Path | Host Path | Container Path | วัตถุประสงค์ |
 |-------------------|-----------|----------------|-------------|
-| | | | |
+| postgres_data | (Docker Managed) | /var/lib/postgresql/data | จัดเตรียมพื้นที่สำหรับ Persistent Data |
 
 #### Network Configuration (Rubric 2.5 ข้อ 5)
 
@@ -675,7 +686,7 @@ cd frontend && npm install && npm run dev
 
 | Network Name | Driver | Services ที่อยู่ใน Network นี้ |
 |-------------|--------|-------------------------------|
-| | | |
+| Default (Bridge) | bridge | backend, frontend |
 
 #### คำสั่งรัน Staging
 
@@ -689,14 +700,14 @@ docker compose up --build
 
 | ทดสอบ | URL | ผลลัพธ์ที่คาดหวัง | ผ่าน/ไม่ผ่าน |
 |-------|-----|-----------------|-------------|
-| Backend Health Check | `http://localhost:3001/api/health` | `{"status":"ok"}` | ☐ |
-| Frontend | `http://localhost:80` | หน้า Login แสดงผลสำเร็จ | ☐ |
+| Backend Health Check | `http://localhost:3001/api/health` | `{"status":"ok"}` | ✅ |
+| Frontend | `http://localhost:80` | หน้า Login แสดงผลสำเร็จ | ✅ |
 
 #### หลักฐาน Staging
 
 **รูปที่ 11 — `docker compose ps` แสดงทุก Container สถานะ `running`**
 
-`![Docker Compose PS](./tests/reports/staging-docker-ps.png)`
+![Docker Compose PS](./tests/reports/staging-docker-ps.png)
 
 ---
 
@@ -710,7 +721,7 @@ docker compose up --build
 
 **✏️ Connection String ที่ใช้จริง (เบลอ password ก่อนบันทึก):**
 
-`postgresql://neondb_owner:npg_3cQySeOUdzh6@ep-divine-water-aox7h6hc.c-2.ap-southeast-1.aws.neon.tech/neondb?sslmode=require`
+`postgresql://neondb_owner:****************@ep-divine-water-aox7h6hc-pooler.c-2.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require`
 
 ---
 
