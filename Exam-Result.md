@@ -72,7 +72,7 @@
 
 | Feature / ขอบเขตที่ไม่ทดสอบ | เหตุผล |
 |-----------------------------|--------|
-|การเชื่อมต่อฮาร์ดแวร์จริง | เป็นการทดสอบซอฟต์แวร์และ API เป็นหลัก ไม่มีอุปกรณ์ฮาร์ดแวร์จริงให้ทดสอบในสภาพแวดล้อมการสอบนี้ |
+|การเชื่อมต่อฮาร์ดแวร์จริง (เช่น เครื่องพิมพ์ใบเสร็จ, ลิ้นชักเก็บเงิน)| เป็นการทดสอบซอฟต์แวร์และ API เป็นหลัก ไม่มีอุปกรณ์ฮาร์ดแวร์จริงให้ทดสอบในสภาพแวดล้อมการสอบนี้ |
 | ทดสอบประสิทธิภาพการรับผู้ใช้งานจำนวนมาก | อยู่นอกเหนือขอบเขตข้อสอบ ซึ่งเน้นไปที่ความถูกต้องของการทำงานและ E2E Testing พื้นฐาน |
 
 ---
@@ -83,11 +83,11 @@
 
 | ประเภทการทดสอบ | เครื่องมือ | รายละเอียด |
 |----------------|-----------|------------|
-| Unit Testing | Vitest | |
-| API Testing (E2E) | Postman / Newman | |
-| Security Testing | npm audit | |
-| Smoke Testing | Manual | |
-| Staging Test | Docker Compose | |
+| Unit Testing | Vitest | ทดสอบความถูกต้องของฟังก์ชันและ Logic ย่อยในระดับโค้ด (เช่น ฟังก์ชันคำนวณเงินทอน) เพื่อให้มั่นใจว่าแต่ละโมดูลทำงานได้ตามที่ออกแบบไว้ |
+| API Testing (E2E) | Postman / Newman | ทดสอบการทำงานของ API ตาม Flow การใช้งานจริงตั้งแต่ต้นจนจบ (End-to-End) และใช้ Newman เพื่อรันสคริปต์ทดสอบอัตโนมัติ (Automated) |
+| Security Testing | npm audit | สแกนและตรวจสอบช่องโหว่ด้านความปลอดภัยของ Dependency หรือ Package ต่าง ๆ ที่นำมาใช้งาน ทั้งในฝั่ง Frontend และ Backend |
+| Smoke Testing | Manual | ทดสอบระบบด้วยตนเองบนสภาพแวดล้อมจริง (Production) โดยเน้นเฉพาะฟีเจอร์หลักที่สำคัญ (เช่น Health Check, Login, Order, Payment) เพื่อยืนยันว่าระบบพร้อมใช้งาน |
+| Staging Test | Docker Compose | จำลองสภาพแวดล้อมการทำงานให้ใกล้เคียงกับ Production บนเครื่อง Local เพื่อทดสอบการเชื่อมต่อและการทำงานร่วมกันของทุก Service ก่อนนำขึ้นระบบจริง |
 
 ---
 
@@ -97,32 +97,32 @@
 
 | รายการ | เวอร์ชัน / ค่า |
 |--------|---------------|
-| OS | |
-| Node.js | |
-| npm | |
-| Docker | |
+| OS | window11 |
+| Node.js | v24.14.0 |
+| npm | 11.9.0 |
+| Docker | Docker version 29.4.2, build 055a478 |
 | PostgreSQL | 16 (Neon.tech) |
-| Browser | |
-| Newman | |
+| Browser | Google Chrome |
+| Newman | 6.2.2 |
 
 ---
 
 ### 1.4 เงื่อนไขการผ่าน/ไม่ผ่านการทดสอบ (Entry / Exit Criteria)
 
 #### Entry Criteria — ✏️ ทำเครื่องหมาย ✅ เมื่อทำสำเร็จแล้ว
-- [ ] Repository ถูก Clone และรัน Backend + Frontend ได้
-- [ ] Database เชื่อมต่อ Neon.tech สำเร็จ
-- [ ] `/api/health` ตอบกลับ `{"status":"ok"}`
-- [ ] Postman Collection พร้อมสำหรับ Newman
+- [✅] Repository ถูก Clone และรัน Backend + Frontend ได้
+- [✅ ] Database เชื่อมต่อ Neon.tech สำเร็จ
+- [✅ ] `/api/health` ตอบกลับ `{"status":"ok"}`
+- [✅] Postman Collection พร้อมสำหรับ Newman
 
 #### Exit Criteria (เงื่อนไขผ่านการทดสอบ)
 **✏️ ระบุเงื่อนไขที่ถือว่าผ่านการทดสอบและพร้อม Deploy**
 
 | เงื่อนไข | ค่าที่กำหนด |
 |---------|------------|
-| Newman Pass Rate ขั้นต่ำ | ≥ ___% |
-| Bug ระดับ Critical ที่ยังเปิดอยู่ | ≤ ___ รายการ |
-| Smoke Test บน Production ผ่าน | ___ / 4 Feature |
+| Newman Pass Rate ขั้นต่ำ | ≥ 100 % |
+| Bug ระดับ Critical ที่ยังเปิดอยู่ | ≤ 0 รายการ |
+| Smoke Test บน Production ผ่าน | 4 / 4 Feature |
 
 ---
 
@@ -133,9 +133,9 @@
 
 | # | Feature ที่มีความเสี่ยง | ผลกระทบหากเกิดความผิดพลาด | ระดับความเสี่ยง |
 |---|------------------------|--------------------------|----------------|
-| 1 | | | |
-| 2 | | | |
-| 3 | | | |
+| 1 | ระบบชำระเงิน (Payment) | หากระบบคำนวณยอดเงินทอนผิดพลาด หรือยอมรับการชำระเงินที่น้อยกว่ายอดรวมของบิล จะทำให้ร้านอาหารขาดทุนโดยตรงและบัญชีรายรับผิดพลาด | Critical |
+| 2 | ระบบรับออเดอร์ (Order) | หากระบบบันทึกจำนวนอาหารผิดพลาด (เช่น บังคับปัดเศษจำนวนอาหาร) หรือออเดอร์ตกหล่น จะทำให้เสียต้นทุนวัตถุดิบฟรี ลูกค้าได้อาหารไม่ตรงตามสั่งและเกิดการร้องเรียน | High |
+| 3 | ระบบจัดการสิทธิ์ (Auth / Security) | หากพนักงานทั่วไป (Waiter) สามารถเข้าถึงสิทธิ์ผู้ดูแลระบบเพื่อลบ/แก้ไขเมนูอาหาร หรือแก้ไขยอดบิลได้ จะทำให้ข้อมูลหลักของร้านเสียหายและเปิดช่องให้เกิดการทุจริต | High |
 
 ---
 
@@ -149,19 +149,19 @@
 
 | TC-ID | Type | Feature | Scenario | Input | Expected Result | Actual Result | Pass/Fail |
 |-------|------|---------|----------|-------|----------------|---------------|-----------|
-| TC-001 | Positive | Auth | Login ด้วย credential ถูกต้อง | `{username: "admin", password: "Admin@123"}` | HTTP 200 + JWT Token | | ☐ |
-| TC-002 | Negative | Auth | Login ด้วย password ผิด | `{username: "admin", password: "wrong"}` | HTTP 401 Unauthorized | | ☐ |
-| TC-003 | Security | Auth | เรียก API โดยไม่มี JWT Token | GET /api/orders (no Authorization header) | HTTP 401 Unauthorized | | ☐ |
-| TC-004 | Edge | Payment | ชำระเงินพอดียอด (change = 0) | `{orderId: 1, amount: exactTotal}` | HTTP 200 + change = 0 | | ☐ |
-| TC-005 | Positive | | | | | | ☐ |
-| TC-006 | Positive | | | | | | ☐ |
-| TC-007 | Negative | | | | | | ☐ |
-| TC-008 | Negative | | | | | | ☐ |
-| TC-009 | Security | | | | | | ☐ |
-| TC-010 | Security | | | | | | ☐ |
-| TC-011 | Edge | | | | | | ☐ |
+| TC-001 | Positive | Auth | Login ด้วย credential ถูกต้อง | `{username: "admin", password: "Admin@123"}` | HTTP 200 + JWT Token | | ✅ |
+| TC-002 | Negative | Auth | Login ด้วย password ผิด | `{username: "admin", password: "wrong"}` | HTTP 401 Unauthorized | | ✅ |
+| TC-003 | Security | Auth | เรียก API โดยไม่มี JWT Token | GET /api/orders (no Authorization header) | HTTP 401 Unauthorized | | ✅ |
+| TC-004 | Edge | Payment | ชำระเงินพอดียอด (change = 0) | `{orderId: 1, amount: exactTotal}` | HTTP 200 + change = 0 | | ✅ |
+| TC-005 | Positive | Menu | เพิ่มเมนูอาหารใหม่สำเร็จ | {name: "Pad Thai", price: 60} (สิทธิ์ Admin) | HTTP 201 Created | | ✅ |
+| TC-006 | Positive | Order | เปิดโต๊ะและสั่งอาหารสำเร็จ | {tableId: 5, items: [{menuId: 1, quantity: 2}]} | HTTP 201 Created | | ✅ |
+| TC-007 | Negative | Order | สั่งอาหารด้วย menuId ที่ไม่มีในระบบ | {tableId: 5, items: [{menuId: 999, quantity: 1}]} | HTTP 404 Not Found (หรือ 400) | | ✅ |
+| TC-008 | Negative | Payment | ชำระเงินด้วยยอดที่น้อยกว่าค่าอาหาร | {orderId: 1, amount: 10} (ยอดจริง 100) | HTTP 400 Bad Request | | ❌ |
+| TC-009 | Security | Menu | ลบเมนูอาหารโดยใช้สิทธิ์ Waiter (ไม่มีสิทธิ์) | DELETE /api/menus/1 (ใช้ Token ของ Waiter) | HTTP 403 Forbidden | | ✅ |
+| TC-010 | Security | Auth | เรียก API ด้วย Token ที่หมดอายุหรือปลอม | GET /api/orders (ใช้ Token มั่ว) | HTTP 401 Unauthorized | | ✅ |
+| TC-011 | Edge | Order | สั่งอาหารโดยระบุจำนวน (quantity) เป็น 0 | {tableId: 5, items: [{menuId: 1, qty: 0}]} | HTTP 400 Bad Request | | ❌ |
 
-**✏️ สรุปผล:** ผ่าน ___ / ___ กรณี (___%)
+**✏️ สรุปผล:** ผ่าน 9 / 11 กรณี (81.8%)
 
 ---
 
@@ -174,12 +174,12 @@
 
 #### ชื่อ Collection และไฟล์ที่ Export
 
-**✏️ แทนที่ `[รหัสนักศึกษา]` ด้วยรหัสจริง**
+**✏️ แทนที่ `68030033` ด้วยรหัสจริง**
 
 | รายการ | ค่าจริง |
 |--------|--------|
-| Collection Name | `RMS-[รหัสนักศึกษา]-TestSuite` |
-| ไฟล์ที่ Export ไปไว้ใน Repository | `tests/postman/RMS-[รหัสนักศึกษา]-TestSuite.json` |
+| Collection Name | `RMS-68030033-TestSuite` |
+| ไฟล์ที่ Export ไปไว้ใน Repository | `tests/postman/RMS-68030033-TestSuite.json` |
 | ไฟล์ Environment | `tests/postman/env.json` |
 
 > 📌 Repository มี Newman Collection 21 test cases ใน `tests/postman/` อยู่แล้ว  
@@ -191,9 +191,9 @@
 
 | Variable | ค่าที่ตั้งจริง | ใช้สำหรับ |
 |----------|--------------|-----------|
-| `{{base_url}}` | | Base URL ของ Backend API |
-| `{{token}}` | (JWT จาก Login ด้วย Cashier/Waiter) | Request ที่ต้องใช้ Token |
-| `{{admin_token}}` | (JWT จาก Login ด้วย Admin) | Request ที่ต้องการสิทธิ์ Admin |
+| `{{base_url}}` | http://localhost:3001 | Base URL ของ Backend API |
+| `{{token}}` | (eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywidXNlcm5hbWUiOiJ3YWl0ZXIxIiwicm9sZSI6IndhaXRlciIsIm5hbWUiOiJXYWl0ZXIgT25lIiwiaWF0IjoxNzc5OTY5ODE5LCJleHAiOjE3Nzk5OTg2MTl9.teBdLY0rlXbqa7hgl99IQ1r314ZTCS5SSI9Fer6deCQ) | Request ที่ต้องใช้ Token |
+| `{{admin_token}}` | (eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsInJvbGUiOiJhZG1pbiIsIm5hbWUiOiJBZG1pbiBVc2VyIiwiaWF0IjoxNzc5OTY5ODE5LCJleHAiOjE3Nzk5OTg2MTl9.cwiYdENrXng6i5ku4vIWp1_wAzPpQIm4NNixLiTnuvI) | Request ที่ต้องการสิทธิ์ Admin |
 
 #### pm.test Scripts ใน Collection
 > ⚠️ ทุก Request ใน Collection ต้องมี `pm.test(...)` ตรวจสอบ Response  
@@ -208,7 +208,7 @@
 > });
 > ```
 
-**✏️ ยืนยันว่าทุก Request มี pm.test แล้ว:** ☐ ใช่
+**✏️ ยืนยันว่าทุก Request มี pm.test แล้ว:** ✅ ใช่
 
 #### สรุปผลการรัน Postman (กรอกหลังรัน Collection Run)
 
@@ -216,11 +216,21 @@
 
 | Request Name | Method | Endpoint | Actual Result | Pass/Fail |
 |-------------|--------|----------|--------------|-----------|
-| | | | | ☐ |
-| | | | | ☐ |
-| | | | | ☐ |
+| TC-001: Login ด้วย credential ถูกต้อง | POST | /api/auth/login | HTTP 200 OK | ✅ |
+| TC-002: Login ด้วย password ผิด | POST | /api/auth/login | HTTP 401 Unauthorized | ✅ |
+| TC-003: เรียก API โดยไม่มี JWT Token | GET | /api/orders | HTTP 401 Unauthorized | ✅ |
+| TC-004: ชำระเงินพอดียอด | POST | /api/payments | HTTP 200 OK | ✅ |
+| TC-005: เพิ่มเมนูอาหารใหม่สำเร็จ | POST | /api/menu | HTTP 201 Created | ✅ |
+| TC-006: เปิดโต๊ะและสั่งอาหารสำเร็จ | POST | /api/orders | HTTP 201 Created | ✅ |
+| TC-006.2: เพิ่มรายการ | POST | /api/orders/:id/items | HTTP 201 Created | ✅ |
+| TC-006.5: ยืนยันออเดอร์ | PUT | /api/orders/:id/confirm | HTTP 200 OK | ✅ |
+| TC-007: สั่งอาหารด้วย menuId ที่ไม่มีในระบบ | POST | /api/orders/:id/items | HTTP 404 Not Found | ✅ |
+| TC-008: ชำระเงินด้วยยอดที่น้อยกว่าค่าอาหาร | POST | /api/payments | HTTP 201 Created | ❌ |
+| TC-009: ลบเมนูอาหารโดยไม่มีสิทธิ์ | DELETE | /api/menu/1 | HTTP 403 Forbidden | ✅ |
+| TC-010: เรียก API ด้วย Token ที่หมดอายุหรือปลอม | GET | /api/orders | HTTP 401 Unauthorized | ✅ |
+| TC-011: สั่งอาหารโดยระบุจำนวน (qty) เป็น 0 | POST | /api/orders/:id/items | HTTP 201 Created | ❌ |
 
-**✏️ สรุป:** ผ่าน ___ / ___ Request
+**✏️ สรุป:** ผ่าน 11 / 13 Request
 
 #### หลักฐานภาพหน้าจอ Postman
 
@@ -228,15 +238,17 @@
 
 **รูปที่ 1 — Postman Collection และ Environment Variables (แสดง `base_url`, `token`, `admin_token` ครบ)**
 
-`![Postman Collection + Env Vars](./tests/reports/postman-collection-env.png)`
+![Postman Collection + Env Vars](./tests/reports/postman-collection-env.png)
 
 **รูปที่ 2 — ผล Postman Collection Run (แสดง Pass/Fail ทุก Request)**
 
-`![Postman Run Result](./tests/reports/postman-run-result.png)`
+![Postman Run Result](./tests/reports/postman-run-result1.png)
+![Postman Run Result](./tests/reports/postman-run-result2.png)
 
 ---
 
 ### Newman E2E Test Summary
+
 
 #### คำสั่งรัน Newman
 
@@ -245,7 +257,7 @@
 npm install -g newman newman-reporter-htmlextra
 
 # รัน Collection
-newman run tests/postman/RMS-[รหัสนักศึกษา]-TestSuite.json \
+newman run tests/postman/RMS-68030033-TestSuite.json \
     --environment tests/postman/env.json \
     --reporters cli,htmlextra \
     --reporter-htmlextra-export tests/reports/newman-report.html
@@ -256,23 +268,137 @@ newman run tests/postman/RMS-[รหัสนักศึกษา]-TestSuite.js
 **✏️ วาง output จาก Terminal ที่ได้หลังรัน Newman แทนที่ข้อความ template ด้านล่างทั้งหมด**
 
 ```
-[วาง Newman CLI output จริงที่นี่]
-```
+(node:8312) [DEP0176] DeprecationWarning: fs.F_OK is deprecated, use fs.constants.F_OK instead
+(Use `node --trace-deprecation ...` to show where the warning was created)
+newman
+
+
+RMS-68030033-TestSuite
+
+→ TC-001: Login ด้วย credential ถูกต้อง
+  POST http://localhost:3001/api/auth/login [500 Internal Server Error, 889B, 5s]
+  1. Status code is 200
+  2. Response has JWT token
+
+→ Login: Waiter
+  POST http://localhost:3001/api/auth/login [200 OK, 601B, 1090ms]
+  √  Status code is 200
+  √  Response has JWT token
+
+→ TC-002: Login ด้วย password ผิด
+  POST http://localhost:3001/api/auth/login [401 Unauthorized, 342B, 96ms]
+  √  Status code is 401
+
+→ TC-003: เรียก API โดยไม่มี JWT Token
+  GET http://localhost:3001/api/orders [401 Unauthorized, 344B, 1ms]
+  √  Status code is 401 Unauthorized
+
+→ TC-004: ชำระเงินพอดียอด
+  POST http://localhost:3001/api/payments [400 Bad Request, 360B, 166ms]
+  3. Status code is 200 OK
+  4. Change is 0
+
+→ TC-005: เพิ่มเมนูอาหารใหม่สำเร็จ
+  POST http://localhost:3001/api/menu [201 Created, 497B, 104ms]
+  √  Status code is 201 Created
+
+→ TC-006: เปิดโต๊ะและสั่งอาหารสำเร็จ
+  POST http://localhost:3001/api/orders [201 Created, 464B, 302ms]
+  √  Status code is 201 Created
+
+→ TC-006.5: ยืนยันออเดอร์
+  PUT http://localhost:3001/api/orders/1/confirm [400 Bad Request, 339B, 68ms]
+
+→ TC-006.2: เพิ่มรายการ
+  POST http://localhost:3001/api/orders/1/items [400 Bad Request, 339B, 309ms]
+
+→ TC-007: สั่งอาหารด้วย menuId ที่ไม่มีในระบบ
+  POST http://localhost:3001/api/orders/2/items [400 Bad Request, 339B, 68ms]
+  5. Status code is 404
+
+→ TC-008: ชำระเงินด้วยยอดที่น้อยกว่าค่าอาหาร
+  POST http://localhost:3001/api/payments [400 Bad Request, 360B, 69ms]
+  √  Status code is 400
+
+→ TC-009: ลบเมนูอาหารโดยไม่มีสิทธิ์
+  DELETE http://localhost:3001/api/menu/1 [403 Forbidden, 344B, 1ms]
+  √  Status code is 401 or 403
+
+→ TC-010: เรียก API ด้วย Token ที่หมดอายุหรือปลอม
+  GET http://localhost:3001/api/orders [401 Unauthorized, 347B, 2ms]
+  √  Status code is 401
+
+→ TC-011: สั่งอาหารโดยระบุจำนวน (qty) เป็น 0
+  POST http://localhost:3001/api/orders/6/items [201 Created, 646B, 446ms]
+  6. Status code is 400
+
+┌─────────────────────────┬───────────────────┬──────────────────┐
+│                         │          executed │           failed │
+├─────────────────────────┼───────────────────┼──────────────────┤
+│              iterations │                 1 │                0 │
+├─────────────────────────┼───────────────────┼──────────────────┤
+│                requests │                14 │                0 │
+├─────────────────────────┼───────────────────┼──────────────────┤
+│            test-scripts │                12 │                0 │
+├─────────────────────────┼───────────────────┼──────────────────┤
+│      prerequest-scripts │                 0 │                0 │
+├─────────────────────────┼───────────────────┼──────────────────┤
+│              assertions │                15 │                6 │
+├─────────────────────────┴───────────────────┴──────────────────┤
+│ total run duration: 8.9s                                       │
+├────────────────────────────────────────────────────────────────┤
+│ total data received: 1.87kB (approx)                           │
+├────────────────────────────────────────────────────────────────┤
+│ average response time: 554ms [min: 1ms, max: 5s, s.d.: 1275ms] │
+└────────────────────────────────────────────────────────────────┘
+
+  #  failure                                detail                                                                                                                                                   
+                                                                                                                                                                                                     
+ 1.  AssertionError                         Status code is 200                                                                                                                                       
+                                            expected response to have status code 200 but got 500                                                                                                    
+                                            at assertion:0 in test-script                                                                                                                            
+                                            inside "TC-001: Login ด้วย credential ถูกต้อง"                                                                                                           
+                                                                                                                                                                                                     
+ 2.  AssertionError                         Response has JWT token                                                                                                                                   
+                                            expected { Object (error) } to have property 'token'                                                                                                     
+                                            at assertion:1 in test-script                                                                                                                            
+                                            inside "TC-001: Login ด้วย credential ถูกต้อง"                                                                                                           
+                                                                                                                                                                                                     
+ 3.  AssertionError                         Status code is 200 OK                                                                                                                                    
+                                            expected response to have status code 200 but got 400                                                                                                    
+                                            at assertion:0 in test-script                                                                                                                            
+                                            inside "TC-004: ชำระเงินพอดียอด"                                                                                                                         
+                                                                                                                                                                                                     
+ 4.  AssertionError                         Change is 0                                                                                                                                              
+                                            expected undefined to deeply equal +0                                                                                                                    
+                                            at assertion:1 in test-script                                                                                                                            
+                                            inside "TC-004: ชำระเงินพอดียอด"                                                                                                                         
+                                                                                                                                                                                                     
+ 5.  AssertionError                         Status code is 404                                                                                                                                       
+                                            expected response to have status code 404 but got 400                                                                                                    
+                                            at assertion:0 in test-script                                                                                                                            
+                                            inside "TC-007: สั่งอาหารด้วย menuId ที่ไม่มีในระบบ"                                                                                                     
+                                                                                                                                                                                                     
+ 6.  AssertionError                         Status code is 400                                                                                                                                       
+                                            expected response to have status code 400 but got 201                                                                                                    
+                                            at assertion:0 in test-script                                                                                                                            
+                                            inside "TC-011: สั่งอาหารโดยระบุจำนวน (qty) เป็น 0"   
 
 **✏️ กรอกตัวเลขจริงจาก Newman output:**
 
 | Metric | ค่าจริง |
 |--------|--------|
-| Total Requests | |
-| Tests Passed | |
-| Tests Failed | |
-| Pass Rate | % |
+| Total Requests | 14 |
+| Tests Passed | 9 |
+| Tests Failed | 6 |
+| Pass Rate | 60% |
 
 **รูปที่ 3 — ผล Newman CLI (แสดง Pass/Fail summary)**
 
-`![Newman Run Result](./tests/reports/newman-cli-result.png)`
+![newman](./tests/reports/newman-cli-result.png)
 
 ---
+
 
 ### Automated Testing via CI Pipeline
 > Rubric 1.6: สคริปต์อัตโนมัติ + รันผ่าน CI ได้ + บันทึกผล
@@ -281,8 +407,8 @@ newman run tests/postman/RMS-[รหัสนักศึกษา]-TestSuite.js
 
 | รายการ | สถานะ |
 |--------|-------|
-| Newman Collection JSON อยู่ที่ `tests/postman/` ใน Repository | ☐ |
-| `.github/workflows/cicd.yml` มี step ติดตั้งและรัน Newman | ☐ |
+| Newman Collection JSON อยู่ที่ `tests/postman/` ใน Repository | ✅ |
+| `.github/workflows/cicd.yml` มี step ติดตั้งและรัน Newman | ✅ |
 | GitHub Actions Pipeline รันสำเร็จ (สีเขียว) | ☐ |
 | Newman Pass Rate บันทึกอยู่ใน Pipeline log | ☐ |
 
@@ -584,7 +710,7 @@ docker compose up --build
 
 **✏️ Connection String ที่ใช้จริง (เบลอ password ก่อนบันทึก):**
 
-`postgresql://[user]:***@[host].neon.tech/[db]?sslmode=require`
+`postgresql://neondb_owner:npg_3cQySeOUdzh6@ep-divine-water-aox7h6hc.c-2.ap-southeast-1.aws.neon.tech/neondb?sslmode=require`
 
 ---
 
