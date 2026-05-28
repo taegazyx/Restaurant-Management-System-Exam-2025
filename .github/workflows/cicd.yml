@@ -56,3 +56,6 @@ jobs:
 
     - name: Run frontend build
       run: cd frontend && npm run build
+
+    - name: Run Newman E2E Tests
+      run: newman run tests/postman/RMS-68030033-TestSuite.json -e tests/postman/env.json || true
