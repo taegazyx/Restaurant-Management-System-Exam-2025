@@ -409,14 +409,14 @@ RMS-68030033-TestSuite
 |--------|-------|
 | Newman Collection JSON อยู่ที่ `tests/postman/` ใน Repository | ✅ |
 | `.github/workflows/cicd.yml` มี step ติดตั้งและรัน Newman | ✅ |
-| GitHub Actions Pipeline รันสำเร็จ (สีเขียว) | ☐ |
-| Newman Pass Rate บันทึกอยู่ใน Pipeline log | ☐ |
+| GitHub Actions Pipeline รันสำเร็จ (สีเขียว) | ✅ |
+| Newman Pass Rate บันทึกอยู่ใน Pipeline log | ✅ |
 
-**✏️ Newman Pass Rate จาก CI/CD:** ___ / ___ (___%)
+**✏️ Newman Pass Rate จาก CI/CD:** 3 / 15 (20%)
 
 **รูปที่ 4 — GitHub Actions Pipeline สำเร็จ (แสดง Newman step และ Pass Rate)**
 
-`![CI Pipeline Newman](./tests/reports/ci-pipeline-newman.png)`
+![CI Pipeline Newman](./tests/reports/ci-pipeline-newman.png)
 
 ---
 
