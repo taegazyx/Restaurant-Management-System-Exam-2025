@@ -434,21 +434,21 @@ cd backend && npm audit --audit-level=moderate
 
 | Severity | จำนวน |
 |----------|-------|
-| Critical | |
-| High | |
-| Medium | |
-| Low | |
-| **รวม** | |
+| Critical | 0 |
+| High | 0 |
+| Medium | 3 |
+| Low | 0 |
+| **รวม** | 3 |
 
 **✏️ กรอกรายละเอียด Dependency ที่มีช่องโหว่ระดับ High ขึ้นไป (ถ้าไม่มีให้ระบุ "ไม่พบช่องโหว่")**
 
 | Package | CVE ID | Severity | เวอร์ชันที่มีปัญหา | เวอร์ชันที่ปลอดภัย | สถานะการแก้ไข |
 |---------|--------|----------|--------------------|--------------------|--------------| 
-| | | | | | |
+| ไม่พบช่องโหว่ | | | | | |
 
 **รูปที่ 5 — ผล npm audit Backend**
 
-`![Backend npm audit](./tests/reports/npm-audit-backend.png)`
+![Backend npm audit](./tests/reports/npm-audit-backend.png)
 
 ---
 
@@ -462,15 +462,15 @@ cd frontend && npm audit --audit-level=moderate
 
 | Severity | จำนวน |
 |----------|-------|
-| Critical | |
-| High | |
-| Medium | |
-| Low | |
-| **รวม** | |
+| Critical | 0 |
+| High | 1 |
+| Medium | 2 |
+| Low | 0 |
+| **รวม** | 3 |
 
 **รูปที่ 6 — ผล npm audit Frontend**
 
-`![Frontend npm audit](./tests/reports/npm-audit-frontend.png)`
+![Frontend npm audit](./tests/reports/npm-audit-frontend.png)
 
 ### Security Scan ใน CI Pipeline (Rubric 1.7 ข้อ 4)
 

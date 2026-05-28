@@ -80,3 +80,11 @@ jobs:
 
     - name: Run Newman E2E Tests
       run: newman run tests/postman/RMS-68030033-TestSuite.json -e tests/postman/env.json || true
+
+    - name: Run Backend Security Scan
+      working-directory: ./backend
+      run: npm audit --audit-level=moderate || true
+
+    - name: Run Frontend Security Scan
+      working-directory: ./frontend
+      run: npm audit --audit-level=moderate || true
