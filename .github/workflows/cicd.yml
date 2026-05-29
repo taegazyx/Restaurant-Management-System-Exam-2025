@@ -47,14 +47,14 @@ jobs:
         npx prisma db push --accept-data-loss || true
         npx prisma db seed || true
       env:
-        DATABASE_URL: postgresql://postgres:postgres@localhost:5432/rms_test
+        DATABASE_URL:  ${{ secrets.DATABASE_URL }}
     
 
     - name: Run backend tests
       working-directory: ./backend
       run: npm test || true
       env:
-        DATABASE_URL: postgresql://postgres:postgres@localhost:5432/rms_test
+        DATABASE_URL:  ${{ secrets.DATABASE_URL }}
 
     # --- ฝั่ง Frontend ---
     - name: Install frontend dependencies
@@ -70,7 +70,7 @@ jobs:
       working-directory: ./backend
       run: npm run dev &
       env:
-        DATABASE_URL: postgresql://postgres:postgres@localhost:5432/rms_test
+        DATABASE_URL:  ${{ secrets.DATABASE_URL }}
 
     - name: Wait for Backend to wake up
       run: sleep 10
