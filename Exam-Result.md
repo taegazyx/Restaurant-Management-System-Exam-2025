@@ -42,10 +42,10 @@
 
 | Service | URL (กรอก URL จริง) | สถานะ |
 |---------|---------------------|-------|
-| Frontend (Vercel) | | ☐ |
-| Backend (Render) | | ☐ |
-| API Health Check (`/api/health`) | | ☐ |
-| Database (Neon.tech connection string) | | ☐ |
+| Frontend (Vercel) | https://restaurant-management-system-exam-2-sable.vercel.app | ✅ |
+| Backend (Render) | https://restaurant-management-system-exam-2025-1-xces.onrender.com | ✅ |
+| API Health Check (`/api/health`) | https://restaurant-management-system-exam-2025-1-xces.onrender.com/api/health | ✅ |
+| Database (Neon.tech connection string) | postgresql://neondb_owner:npg_3cQySeOUdzh6@ep-divine-water-aox7h6hc-pooler.c-2.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require | ✅ |
 
 ---
 
@@ -759,7 +759,7 @@ Build Command:  npm run build
 | `PORT` | Backend (Render) | `10000` |
 | `DATABASE_URL` | Backend (Render) | postgresql://neondb_owner:npg_3cQySeOUdzh6@ep-divine-water-aox7h6hc-pooler.c-2.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require |
 | `JWT_SECRET` | Backend (Render) | (ตั้งค่าแล้ว — ไม่ระบุ) |
-| `CORS_ORIGIN` | Backend (Render) | `https://restaurant-management-system-exam-2025-1-xces.onrender.com/` |
+| `CORS_ORIGIN` | Backend (Render) | `https://restaurant-management-system-exam-2-sable.vercel.app` |
 | `NODE_ENV` | Backend (Render) | `production` |
 | `VITE_API_URL` | Frontend (Vercel) | `https://restaurant-management-system-exam-2025-1-xces.onrender.com/api` |
 
@@ -777,7 +777,7 @@ Build Command:  npm run build
 | 3 | Open Order & Add Item | เปิดโต๊ะ → เพิ่มสินค้า → Confirm | ออเดอร์ถูกบันทึก | ✅ |
 | 4 | Payment | ชำระเงิน → ตรวจสอบ change | คำนวณเงินทอนถูกต้อง | ✅ |
 
-**✏️ Production Smoke Test ผ่าน:** ___ / 4 รายการ
+**✏️ Production Smoke Test ผ่าน:** 4 / 4 รายการ
 
 **รูปที่ 12 — Smoke Test Feature 1: Health Check**
 
