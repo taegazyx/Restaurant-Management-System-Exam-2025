@@ -149,19 +149,19 @@
 
 | TC-ID | Type | Feature | Scenario | Input | Expected Result | Actual Result | Pass/Fail |
 |-------|------|---------|----------|-------|----------------|---------------|-----------|
-| TC-001 | Positive | Auth | Login ด้วย credential ถูกต้อง | `{username: "admin", password: "Admin@123"}` | HTTP 200 + JWT Token | | ✅ |
-| TC-002 | Negative | Auth | Login ด้วย password ผิด | `{username: "admin", password: "wrong"}` | HTTP 401 Unauthorized | | ✅ |
-| TC-003 | Security | Auth | เรียก API โดยไม่มี JWT Token | GET /api/orders (no Authorization header) | HTTP 401 Unauthorized | | ✅ |
-| TC-004 | Edge | Payment | ชำระเงินพอดียอด (change = 0) | `{orderId: 1, amount: exactTotal}` | HTTP 200 + change = 0 | | ✅ |
-| TC-005 | Positive | Menu | เพิ่มเมนูอาหารใหม่สำเร็จ | {name: "Pad Thai", price: 60} (สิทธิ์ Admin) | HTTP 201 Created | | ✅ |
-| TC-006 | Positive | Order | เปิดโต๊ะและสั่งอาหารสำเร็จ | {tableId: 5, items: [{menuId: 1, quantity: 2}]} | HTTP 201 Created | | ✅ |
-| TC-007 | Negative | Order | สั่งอาหารด้วย menuId ที่ไม่มีในระบบ | {tableId: 5, items: [{menuId: 999, quantity: 1}]} | HTTP 404 Not Found (หรือ 400) | | ✅ |
-| TC-008 | Negative | Payment | ชำระเงินด้วยยอดที่น้อยกว่าค่าอาหาร | {orderId: 1, amount: 10} (ยอดจริง 100) | HTTP 400 Bad Request | | ❌ |
-| TC-009 | Security | Menu | ลบเมนูอาหารโดยใช้สิทธิ์ Waiter (ไม่มีสิทธิ์) | DELETE /api/menus/1 (ใช้ Token ของ Waiter) | HTTP 403 Forbidden | | ✅ |
-| TC-010 | Security | Auth | เรียก API ด้วย Token ที่หมดอายุหรือปลอม | GET /api/orders (ใช้ Token มั่ว) | HTTP 401 Unauthorized | | ✅ |
-| TC-011 | Edge | Order | สั่งอาหารโดยระบุจำนวน (quantity) เป็น 0 | {tableId: 5, items: [{menuId: 1, qty: 0}]} | HTTP 400 Bad Request | | ❌ |
+| TC-001 | Positive | Auth | Login ด้วย credential ถูกต้อง | `{username: "admin", password: "Admin@123"}` | HTTP 200 + JWT Token | HTTP 200 + JWT Token | ✅ |
+| TC-002 | Negative | Auth | Login ด้วย password ผิด | `{username: "admin", password: "wrong"}` | HTTP 401 Unauthorized | HTTP 401 Unauthorized | ✅ |
+| TC-003 | Security | Auth | เรียก API โดยไม่มี JWT Token | GET /api/orders (no Authorization header) | HTTP 401 Unauthorized | HTTP 401 Unauthorized | ✅ |
+| TC-004 | Edge | Payment | ชำระเงินพอดียอด (change = 0) | `{orderId: 1, amount: exactTotal}` | HTTP 200 + change = 0 | HTTP 400 Bad Request | ❌ |
+| TC-005 | Positive | Menu | เพิ่มเมนูอาหารใหม่สำเร็จ | {name: "Pad Thai", price: 60} (สิทธิ์ Admin) | HTTP 201 Created | HTTP 201 Created | ✅ |
+| TC-006 | Positive | Order | เปิดโต๊ะและสั่งอาหารสำเร็จ | {tableId: 5, items: [{menuId: 1, quantity: 2}]} | HTTP 201 Created | HTTP 201 Created | ✅ |
+| TC-007 | Negative | Order | สั่งอาหารด้วย menuId ที่ไม่มีในระบบ | {tableId: 5, items: [{menuId: 999, quantity: 1}]} | HTTP 404 Not Found (หรือ 400) | HTTP 400 Bad Request | ✅ |
+| TC-008 | Negative | Payment | ชำระเงินด้วยยอดที่น้อยกว่าค่าอาหาร | {orderId: 1, amount: 10} (ยอดจริง 100) | HTTP 400 Bad Request | HTTP 201 Created (change = -90) | ❌ |
+| TC-009 | Security | Menu | ลบเมนูอาหารโดยใช้สิทธิ์ Waiter (ไม่มีสิทธิ์) | DELETE /api/menus/1 (ใช้ Token ของ Waiter) | HTTP 403 Forbidden | HTTP 403 Forbidden | ✅ |
+| TC-010 | Security | Auth | เรียก API ด้วย Token ที่หมดอายุหรือปลอม | GET /api/orders (ใช้ Token มั่ว) | HTTP 401 Unauthorized |  HTTP 401 Unauthorized | ✅ |
+| TC-011 | Edge | Order | สั่งอาหารโดยระบุจำนวน (quantity) เป็น 0 | {tableId: 5, items: [{menuId: 1, qty: 0}]} | HTTP 400 Bad Request | HTTP 201 Created (qty ถูกเปลี่ยนเป็น 1) | ❌ |
 
-**✏️ สรุปผล:** ผ่าน 9 / 11 กรณี (81.8%)
+**✏️ สรุปผล:** ผ่าน 8 / 11 กรณี (72.7%)
 
 ---
 
